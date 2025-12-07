@@ -10,6 +10,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/smtp"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -286,6 +287,7 @@ func main() {
 		}
 	})
 
+    http.HandleFunc("/otp", otpPageHandler)
 
 	http.HandleFunc("/verify-otp", verifyOTPHandler)
 
@@ -883,11 +885,7 @@ if err != nil {
 	}
 
 	// Tampilkan halaman verifikasi OTP
-	err = templates.ExecuteTemplate(w, "otp.html", map[string]string{"Email": email})
-	if err != nil {
-		http.Error(w, "Gagal menampilkan halaman OTP", http.StatusInternalServerError)
-		return
-	}
+    http.Redirect(w, r, "/otp?email="+url.QueryEscape(email), http.StatusSeeOther)
 }
 
 	
@@ -1005,8 +1003,21 @@ func verifyOTPHandler(w http.ResponseWriter, r *http.Request) {
 		templates.ExecuteTemplate(w, "success.html", nil)
 		return
 	}
-
+    email := r.URL.Query().Get("email")
+    templates.ExecuteTemplate(w, "otp.html", map[string]string{"Email": email})
 	http.Redirect(w, r, "/register", http.StatusSeeOther)
+}
+
+func otpPageHandler(w http.ResponseWriter, r *http.Request) {
+    if r.Method == http.MethodPost {
+        // Panggil verifyOTPHandler atau langsung masukkan logic verifikasi di sini
+        verifyOTPHandler(w, r)
+        return
+    }
+
+    // GET request → tampilkan otp.html
+    email := r.URL.Query().Get("email")
+    templates.ExecuteTemplate(w, "otp.html", map[string]string{"Email": email})
 }
 
 // --- FORGOT PASSWORD ---
