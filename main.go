@@ -521,8 +521,8 @@ http.HandleFunc("/api/admin/daftar-pinjam/", func(w http.ResponseWriter, r *http
     http.HandleFunc("/manajemen_pinjam", manajemenPengajuanHandler)
 
 // --- Mulai server ---
-fmt.Println("🚀 Server jalan di http://localhost:8080")
-log.Fatal(http.ListenAndServe(":8080", nil))
+fmt.Println("🚀 Server jalan di http://localhost:3030")
+log.Fatal(http.ListenAndServe(":3030", nil))
 
 }
 
